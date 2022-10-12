@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .big {
+            width: 620px;
+            height: 300px;
+            /* display:; */
+            overflow: scroll;
+
+        }
+
+        .small {
+            width: 600px;
+            height: 600px;
+            background-color: #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="big">
+        <div class="small">
+
+            欢迎注册成为京东用户！在您注册过程中，您需要完成我们的注册流程并通过点击同意的形式在线签署以下协议，请您务必仔细阅读、充分理解协议中的条款内容后再点击同意（尤其是以粗体或下划线标识的条款，因为这些条款可能会明确您应履行的义务或对您的权利有所限制）。
+        </div>
+    </div>
+    <!-- <button>点击</button> -->
+    <input type="checkbox" disabled class="agree">
+    同意协议
+    <input type="button" class="go" value="去注册" disabled>
+</body>
+<script src="../js/dom.js"></script>
+
+<script>
+    var Big = document.querySelector('.big');
+    Big.onscroll = function () {
+        console.log(666);
+        var height = parseFloat(window.getComputedStyle(Big).height);
+        if (Big.scrollHeight == height + parseFloat(Big.scrollTop)) {
+            get('.agree').disabled = false;
+
+        }
+    }
+    //点击事件
+    get('.agree').onclick = function () {
+        get('.go').disabled = !this.checked
+    }
+
+
+
+</script>
+
+
+</html>

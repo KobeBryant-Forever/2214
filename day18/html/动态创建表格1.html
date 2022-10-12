@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态创建表单</title>
+    <style>
+        /* div {
+            width: 200px;
+        } */
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        div {
+            text-align: center;
+            margin-bottom: -25px;
+        }
+
+        table {
+            margin: 1rem auto;
+
+        }
+
+        table,
+        table tr th,
+        table tr td {
+            border: 1px solid rgb(5, 5, 5);
+            text-align: center;
+            border-collapse: collapse;
+            /* background-color: cyan; */
+        }
+
+        a {
+            /* color: red; */
+            /* display: inline-block; */
+            color: #000;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: red;
+        }
+
+        /* .edit:hover {
+            color: red;
+        }
+
+        .del:hover {
+            color: red;
+        } */
+        .xiugai {
+            width: 300px;
+            height: 200px;
+            border: 1px solid #000;
+            background-color: cyan;
+            position: absolute;
+            top: 136px;
+            left: 600px;
+            display: none;
+        }
+
+        .modify {
+            width: 56px;
+            height: 30px;
+            margin-top: 10px;
+            border-radius: 15%;
+        }
+
+        .modify:hover {
+            color: red;
+        }
+
+        .change {
+            width: 56px;
+            height: 30px;
+            margin-top: 10px;
+            border-radius: 15%;
+
+        }
+
+        .change:hover {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <input type="text" id="username">
+        <input type="radio" id="sexOne" name="sex" value="男" />男
+        <input type="radio" id="sexTwo" checked name="sex" value="女" />女
+        <input type="text" id="age">
+        <button class="add">添加数据</button>
+    </div>
+    <!-- 修改区域 -->
+    <div class="xiugai">
+        <input type="text" class="name">
+        <br>
+        <input type="radio" name="changeSex" value="男">男
+        <input type="radio" name="changeSex" value="女">女
+        <br>
+        <input type="text" class="age">
+        <br>
+        <input type="hidden" class="userId" value="-1">
+        <button class="modify">修改</button><br>
+        <button class="change">取消</button>
+
+    </div>
+    <br>
+    <table cellspacing="0" ;border="1" width="600px">
+        <thead>
+            <tr>
+                <td>姓名</td>
+                <td>性别</td>
+                <td>年龄</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+    <script>
+        var data = [{
+            name: 'Jack',
+            age: 18,
+            gender: '男'
+        },
+        {
+            name: 'Rose',
+            age: 20,
+            gender: '女'
+        },
+        {
+            name: 'Top',
+            age: 22,
+            gender: '男'
+        }
+        ];
+        //添加数据
+        get('.add').addEventListener('click', function () {
+            //用户用户输入要添加的数据
+            var name = get('#username').value;
+            var sex = get('input[name="sex"]:checked').value;
+            var age = get('#age').value;
+            console.log(name, sex, age);
+            //把输入的数据添加到原数据
+            data.push({
+                name: name,
+                age: age,
+                gender: sex
+            })
+            //更新数据
+            showData();
+        })
+
+
+        //删除和修改
+        get('tbody').addEventListener('click', function (e) {
+            // console.log(666);
+            if (e.target.className == 'delete') {
+                //获取要修改的数据的在原数据中的下标
+                var index = e.target.getAttribute('data-index');
+                console.log(666);
+
+                // console.log(index);
+
+                data.splice(index, 1)
+                //更新数据
+                showData();
+
+            } else if (e.target.className == 'edit') {
+                var index = e.target.dataset.index;
+                get('.name').value = data[index].name;
+                get('.age').value = data[index].age;
+                get(`input[name="changeSex"][value=${data[index].gender}]`).checked = true;
+                //设置显示修改区域，数据，和点击要修改的时候把数据渲染到框中
+                get('.userId').value = index;
+                get('.xiugai').style.display = 'block';
+            }
+        })
+
+        //修改
+        get('.modify').addEventListener('click', function () {
+            //拿到要修改的数据，放在框里
+            var name = get('.name').value;
+            var sex = get('input[name = "changeSex"]:checked').value;
+            var age = get('.age').value;
+
+            //拿到修改的数据在原数据中
+            var index = get('.userId').value;
+            //更新数据
+            data[index] = {
+                name: name,
+                age: age,
+                gender: sex
+            }
+            //再次渲染
+            showData();
+            //隐藏修改区域
+            get('.xiugai').style.display = 'none';
+        })
+        get('.change').addEventListener('click', function () {
+            get('.xiugai').style.display = 'none';
+        })
+        //调用
+        showData();
+
+
+
+        //将原始数据渲染到表单中
+        function showData() {
+            var html = '';
+            //遍历原数据
+            data.forEach(function (itme, index) {
+                //模板字符串
+                html += `<tr>
+                <td>${itme.name}</td>
+                <td>${itme.gender}</td>
+                <td>${itme.age}</td>
+                <td><a href='#' class = "edit" data-index=${index}>修改</a>&nbsp;||&nbsp<a href="#" class = "delete" data-index=${index}>删除</a></td>
+            </tr>`
+            })
+            get('tbody').innerHTML = html;
+        }
+
+
+
+
+
+        // //删除和修改
+        // get('tbody').addEventListener('click', function (e) {
+        //     if (e.target.className == 'del') {
+        //         //获取点击数据的下标
+        //         var index = e.target.getAttribute('data-index');
+        //         //截取数据
+        //         data.splice(index, 1)
+        //         //再次渲染
+        //         showData();
+        //     } else if (e.target.className = 'edit') {
+        //         var index = e.target.dataset.index;
+        //     }
+        // })
+
+        function get(id) {
+            return document.querySelector(id);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .banner {
+            width: 500px;
+            height: 300px;
+            margin: 30px auto;
+            position: relative;
+            background-color: cyan;
+            overflow: hidden;
+        }
+
+        .xiaodian {
+            width: 2500px;
+            display: flex;
+            position: absolute;
+        }
+
+        .xiaodian p {
+            width: 500px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            border: 1px solid #000;
+            box-sizing: border-box;
+        }
+
+        ol {
+            width: 100px;
+            display: flex;
+            justify-content: center;
+            position: absolute;
+            bottom: 0;
+            list-style: none;
+        }
+
+        ol li {
+            width: 20px;
+            height: 20px;
+            margin: 10px;
+            border-radius: 50%;
+
+        }
+
+        .active {
+            background-color: #0f0;
+        }
+
+        span {
+            width: 20px;
+            height: 20px;
+            background-color: #eee;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            text-align: center;
+            line-height: 20px;
+        }
+
+        .next {
+            right: 0;
+        }
+
+        .prev {
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="banner">
+        <div class="xiaodian">
+            <p>1</p>
+            <p>2</p>
+            <p>3</p>
+            <p>4</p>
+            <p>1</p>
+        </div>
+        <ol>
+            <li class="active"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ol>
+        <span class="next">&gt;</span>
+        <span class="prev">&lt;</span>
+    </div>
+    <script>
+        //获取页面元素
+        var Little = document.querySelector('.xiaodian');
+        var Box = document.querySelector('.banner');
+        var oImgs = document.querySelectorAll('p');
+        var oLis = document.querySelectorAll('li');
+        var Next = document.querySelector('.next');
+        var Prev = document.querySelector('.prev');
+
+        //全局变量控制张数和清除定时器和小点切换
+        var index = 0;
+        var timer;
+        var flag = true;
+        autoPlay();
+
+
+
+        //显示
+        function showDot() {
+            for (var i = 0; i < oLis.length; i++) {
+                oLis[i].classList.remove('active');
+            }
+
+            // 播放最后一张实际上是第一张
+            if (index == oImgs.length - 1) {
+                oLis[0].classList.add('active');
+            } else {
+                oLis[index].classList.add('active');
+            }
+        }
+        //自动播放
+        function autoPlay() {
+            //设置定时器控制切换时间
+            timer = setInterval(function () {
+                index++;
+                showDot();
+                move(Little, -500 * index, 'left', function () {
+                    //判断最后一张后回到第一张
+                    if (index === oImgs.length - 1) {
+                        index == 0;
+                        Little.style.left = 0;
+                    }
+                })
+            }, 1000)
+        }
+
+
+
+
+        //移动事件
+        function move(ele, end, prop, cb) {
+            flag = false;
+
+            //获取开始的位置
+            var cur = parseInt(getComputedStyle(ele)[prop]);
+
+            var t = setInterval(function () {
+                speed = (end - cur) / 10;//剩下的距离十等分
+                //分不完就取整
+                speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+                cur += speed;
+                ele.style[prop] = cur + 'px';
+                if (Math.abs(end - cur) <= Math.abs(speed)) {
+                    clearInterval(t);
+                    flag = true;
+                    ele.style[prop] = end + 'px';
+                    cb && cb()
+                }
+            }, 20)
+        }
+    </script>
+</body>
+
+</html>

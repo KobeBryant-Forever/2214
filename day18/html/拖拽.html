@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            background-color: cyan;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div></div>
+    <script>
+        /*
+            鼠标按下事件，按下事件后事件源随着鼠标移动
+            移动过程中，通过修改top left值，实现跟随
+            最后需要设置事件结束的时候，也就是鼠标松开的时候
+
+        */
+        //获取元素
+        var Div = document.querySelector('div');
+        // console.log(Div);
+        //绑定点击事件
+        Div.onmousedown = function () {
+            // console.log(666);
+            //鼠标移动事件,以浏览器左上角为起点，
+            // 用clientY设置元素的起点
+            // 需要将元素定位到元素中间，方法直接减去元素的一半高度
+            this.onmousemove = function (event) {
+                this.style.top = event.clientY - parseInt(window.getComputedStyle(this).height) / 2 + 'px';
+                this.style.left = event.clientX - parseInt(window.getComputedStyle(this).width) / 2 + 'px';
+            }
+        }
+
+        //鼠标松开，事件结束,清除移动事件
+        Div.onmouseup = function () {
+            this.onmousemove = null
+        }
+    </script>
+</body>
+
+</html>

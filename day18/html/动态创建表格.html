@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style type="text/css">
+        .wrap {
+            width: 800px;
+            margin: 30px auto 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #fa4500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            margin: 1rem auto;
+        }
+
+        table,
+        td,
+        th {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            width: 150px;
+            height: 40px;
+            /* background-color: #23C6D9; */
+            /* background-color: cyan; */
+            /* color: #fff; */
+            border: 1px solid #000;
+        }
+
+        .w500 {
+            width: 300px;
+        }
+
+        td {
+            height: 30px;
+            color: #333;
+            border: 2px solid #000;
+        }
+
+        .mask {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.15);
+            display: none;
+        }
+
+        .form-item {
+            height: 100%;
+            position: relative;
+            padding-left: 100px;
+            padding-right: 20px;
+            margin-bottom: 34px;
+            line-height: 36px;
+        }
+
+        .form-item>.lb {
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: block;
+            width: 100px;
+            text-align: right;
+        }
+
+        .form-item>.txt {
+            width: 300px;
+            height: 32px;
+        }
+
+        .form-add {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            margin-left: -197px;
+            padding-bottom: 20px;
+            background: #fff;
+            display: none;
+        }
+
+        .form-add-title {
+            background-color: #f7f7f7;
+            border-width: 1px 1px 0 1px;
+            border-bottom: 0;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .form-add-title span {
+            width: auto;
+            height: 18px;
+            font-size: 16px;
+            font-family: "Microsoft YaHei";
+            font-weight: bold;
+            color: rgb(102, 102, 102);
+            text-indent: 12px;
+            padding: 8px 0px 10px;
+            margin-right: 10px;
+            display: block;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .form-add-title div {
+            width: 16px;
+            height: 20px;
+            position: absolute;
+            right: 10px;
+            top: 6px;
+            font-size: 30px;
+            line-height: 16px;
+            cursor: pointer;
+        }
+
+        .form-submit {
+            text-align: center;
+        }
+
+        .form-submit input {
+            width: 170px;
+            height: 32px;
+        }
+
+        .add {
+            float: right;
+
+            padding-right: 320px;
+        }
+    </style>
+    </head>
+
+    <body>
+        <div class="wrap">
+
+            <table>
+                <tbody>
+                    <tr>
+                        <th>姓名</th>
+                        <th>年龄</th>
+                        <th class="w500">性别</th>
+                        <th>操作</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="add">
+            <input type="button" value="添加数据" id="addData" class="btnAdd">
+        </div>
+        <div id="mask" class="mask"></div>
+        <!-- 上面的表单中的表格名称 -->
+        <div id="formAdd" class="form-add">
+            <div class="form-add-title">
+                <span>点击添加数据</span>
+                <div id="hideFormAdd">x</div>
+            </div>
+            <div class="form-item">
+                <label class="lb" for="Name">姓名：</label>
+                <input class="txt" type="text" id="Name" placeholder="请输入姓名">
+            </div>
+            <div class="form-item">
+                <label class="lb" for="sex">性别：</label>
+                <input class="txt" type="text" id="sex" value="" placeholder="请输入性别">
+            </div>
+            <div class="form-item">
+                <label class="lb" for="age">年龄：</label>
+                <input class="txt" type="text" id="age" value="" placeholder="请输入年龄">
+            </div>
+            <div class="form-submit">
+                <input type="button" value="添加" id="btnAdd">
+            </div>
+        </div>
+        <script>
+            var datas = [{
+                name: 'Kobe',
+                age: 18,
+                gender: '男'
+            },
+            {
+                name: 'James',
+                age: 18,
+                gender: '男'
+            },
+            {
+                name: 'Jack',
+                age: 18,
+                gender: '男'
+            }, {
+                name: '马云',
+                age: '46',
+                gender: '女'
+            },
+            {
+                name: '马化腾',
+                age: '58',
+                gender: "男"
+            }
+            ];
+            //获取元素
+            var tbody = document.querySelector('tbody');
+            //遍历得到
+            for (var i = 0; i < datas.length; i++) { //行
+                //动态创建tr
+                var row = document.createElement('tr');
+                //把行加到页面上
+                tbody.appendChild(row);
+                //遍历原生数据并加到单元格里面
+                for (var k in datas[i]) { //列的前3个单元格
+                    var cell = document.createElement('td');
+                    cell.innerHTML = datas[i][k];
+                    row.appendChild(cell);
+                }
+                cell2 = document.createElement('td');//创建删除
+                cell2.innerHTML = "<a href=''>删除</a>";
+                row.appendChild(cell2);
+            }
+            //显示隐藏添加数据的页面
+            var addData = document.querySelector('#addData');
+            var mask = document.querySelector('#mask');
+            var formAdd = document.querySelector('#formAdd');
+            var hideFormAdd = document.querySelector('#hideFormAdd');
+            //通过事件监听
+            addData.addEventListener('click', function () {
+                mask.style.display = 'block';
+                formAdd.style.display = 'block';
+            })
+            hideFormAdd.addEventListener('click', function () {
+                mask.style.display = 'none';
+                formAdd.style.display = 'none';
+            })
+
+            //添加数据操作
+            var btnAdd = document.querySelector('#btnAdd');
+            btnAdd.addEventListener('click', function () {
+                var name = document.querySelector('#Name').value;
+                var dynasty = document.querySelector('#sex').value;
+                var deeds = document.querySelector('#age').value;
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + name + '</td><td>' + dynasty + '</td><td>' + deeds + '</td><td>' + '<a href="javascript:;" >删除</a></td>';
+                tbody.appendChild(tr);
+                mask.style.display = 'none';
+                formAdd.style.display = 'none';
+                document.querySelector('#Name').value = '';
+                document.querySelector('#sex').value = '';
+                document.querySelector('#age').value = '';
+            })
+
+            //删除操作，利用事件委托原理，监听tbody，触发事件的元素是e.target
+            tbody.addEventListener('click', function (e) {
+                var dels = tbody.querySelectorAll('a');
+                for (let i = 0; i < dels.length; i++) {
+                    if (e.target == dels[i]) {
+                        var flag = confirm("你确定要删除吗?");
+                        var trCur = e.target.parentNode.parentNode;
+                        if (flag) {
+                            tbody.removeChild(trCur);
+                        }
+                    }
+                }
+            })
+        </script>
+    </body>
+</body>
+
+</html>

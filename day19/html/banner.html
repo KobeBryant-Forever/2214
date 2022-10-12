@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .a {
+            width: 500px;
+            height: 300px;
+            margin: 30px auto;
+            position: relative;
+            background-color: #f00;
+            overflow: hidden;
+        }
+
+        .a1 {
+            width: 2500px;
+            display: flex;
+            position: absolute;
+        }
+
+        .a1 p {
+            width: 500px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            border: 1px solid #000;
+            box-sizing: border-box;
+        }
+
+
+
+        ol {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            position: absolute;
+            bottom: 0;
+            list-style: none;
+        }
+
+        ol li {
+            width: 20px;
+            height: 20px;
+            margin: 10px;
+            border: 1px solid #000;
+        }
+
+        .active {
+            background-color: #0f0;
+        }
+
+        span {
+            width: 20px;
+            height: 20px;
+            background-color: #f0f;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            text-align: center;
+        }
+
+        .next {
+            right: 0;
+        }
+
+        .prev {
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="a">
+        <div class="a1">
+            <p>1</p>
+            <p>2</p>
+            <p>3</p>
+            <p>4</p>
+            <p>1</p>
+        </div>
+        <ol>
+            <li class="active"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ol>
+        <span class="prev">&lt;</span>
+        <span class="next">&gt;</span>
+    </div>
+
+
+
+
+    <script>
+
+        // 无缝滚动的实现
+        //    在最后面复制一个第一张
+
+
+
+        // 注意
+        //    控制播放图片的这个定时器要时间长一些  (move尽量快一些)
+
+        //    页面失去焦点的时候，资源跟不上  
+        //       失去焦点之后，暂停播放
+        //       获取焦点之后，再播放
+
+        //    点击过快的问题   flag   (move的时候不能点击)
+
+        //    上下翻页判断的时候，先判断再加减
+
+
+        //   使用缓冲运动解决  小点切换的问题(距离太远)
+
+
+        var oA1 = document.querySelector('.a1');
+        var oBox = document.querySelector('.a');
+        var oImgs = document.querySelectorAll('p');
+        var oLis = document.querySelectorAll('li');
+        var oPrev = document.querySelector('.prev');
+        var oNext = document.querySelector('.next');
+
+
+        var index = 0;
+        var timer;
+        var flag = true;
+
+        autoPlay();
+
+
+        window.onblur = function () {
+            clearInterval(timer);
+        }
+
+        window.onfocus = function () {
+            autoPlay()
+        }
+
+
+        oBox.onmouseover = function () {
+            clearInterval(timer);
+        }
+
+        oBox.onmouseout = function () {
+            autoPlay()
+        }
+
+
+        // 小点切换
+        oLis.forEach(function (v, i) {
+            v.onclick = function () {
+                if (flag) {
+                    clearInterval(timer);
+                    index = i;
+                    showDot();
+                    move(oA1, -500 * index, 'left');
+                }
+            }
+        })
+
+
+        // 上翻页
+        oPrev.onclick = function () {
+            if (flag) {
+                clearInterval(timer);
+                // 判断是第一张
+                if (index === 0) {
+                    // 就切到最后一张，也就是第一张
+                    index = oImgs.length - 1;
+                    oA1.style.left = - index * 500 + 'px';
+                }
+                index--;
+                showDot();
+                move(oA1, -500 * index, 'left');
+            }
+        }
+
+        // 下翻页
+        oNext.onclick = function () {
+            if (flag) {
+                clearInterval(timer);
+                // 判断是最后一张(也是第一张)
+                if (index === oImgs.length - 1) {
+                    // 就切到最后一张，也就是第一张
+                    index = 0;
+                    oA1.style.left = - index * 500 + 'px';
+                }
+                index++;
+                showDot();
+                move(oA1, -500 * index, 'left', function () {
+                    if (index === oImgs.length - 1) {
+                        index = 0;
+                        oA1.style.left = 0;
+                    }
+                });
+            }
+
+        }
+
+
+        function showDot() {
+            for (var i = 0; i < oLis.length; i++) {
+                oLis[i].classList.remove('active');
+            }
+
+            // 播放最后一张实际上是第一张
+            if (index == oImgs.length - 1) {
+                oLis[0].classList.add('active');
+            } else {
+                oLis[index].classList.add('active');
+            }
+        }
+
+
+        function autoPlay() {
+            timer = setInterval(function () {
+                index++;
+                showDot();
+                move(oA1, -500 * index, 'left', function () {
+                    if (index === oImgs.length - 1) {
+                        index = 0;
+                        oA1.style.left = 0;
+                    }
+                })
+            }, 2000)
+        }
+
+
+
+
+
+
+        function move(ele, end, prop, cb) {
+            flag = false;
+            // 获取开始的位置
+            var cur = parseInt(getComputedStyle(ele)[prop]);
+
+            var t = setInterval(function () {
+                // 把剩余的路程等分10   分不完...
+                speed = (end - cur) / 10;
+                // 0.2   1   向上取整
+                // -0.2  -1  向下取整
+                speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+
+                cur += speed;
+                ele.style[prop] = cur + 'px';
+                if (Math.abs(end - cur) <= Math.abs(speed)) {
+                    clearInterval(t);
+                    flag = true;
+                    ele.style[prop] = end + 'px';
+                    cb && cb()
+                }
+            }, 20)
+        }
+
+
+
+
+    </script>
+
+</body>
+
+</html>

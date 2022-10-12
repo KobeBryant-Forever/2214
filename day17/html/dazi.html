@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            height: 100%;
+            overflow-y: hidden;
+        }
+
+        span {
+            width: 40px;
+            height: 40px;
+            background-color: cyan;
+            display: block;
+            /* border: 1px solid #eee; */
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-size: 24px;
+            font-weight: bold;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <span></span> -->
+    <!-- 得分:<p>0</p> -->
+    <p>得分:<b>0</b></p>
+    <script src="../js/dom.js"></script>
+
+    <script>
+        //全局变量，用于清除定时器
+        var timer;
+
+        function creatChar() {
+            //字符串
+            var str = '1234567890abcdefghijklmnopqrstuvwxyz';
+            //随机获取一个，通过随机下标
+            var index = Random(0, str.length, false);
+
+            //返回随机字符
+            return str[index];
+        }
+
+        //动态创建span标签
+        function createSpan() {
+            var spanDom = document.createElement('span');
+            //调用生成随机字符函数并把产生的随机字符赋值给生成的span
+            spanDom.innerHTML = creatChar();
+
+            //将产生的随机字符添加到页面
+            document.body.appendChild(spanDom)
+            // console.log(window.getComputedStyle(document.body).width);
+            //设置运动的最左边距离，计算.可视宽度(body),不能包括最左边的，
+            // console.log(document.body.clientWidth);
+
+            //计算最大宽度距离，页面可视区剪掉span的宽度，避免出现滚动条
+            var maxWidth = document.body.clientWidth - parseInt(getStyle(spanDom, 'width'));
+            //计算随机距离
+            var left = Random(0, maxWidth);
+            spanDom.style.left = left + 'px';
+
+            //控制下落的距离和时间。通过定时器
+            timer = setInterval(function () {
+                //判断落到底部没有，首先获取当前span的位置
+                // console.log(666);
+                var top = parseInt(getStyle(spanDom, 'top'));
+                // console.log(document.body.clientHeight);
+                //获取下落的最大高度
+                var maxHeight = document.body.clientHeight - parseInt(getStyle(spanDom, 'height'));
+                // console.log(document.body.clientHeight);
+                //判断下落的距离是否到底
+                if (top >= maxHeight) {
+                    //已经到底部，并清除定时器和事件，让事件重新触发
+                    clearInterval(timer);
+                    //清除事件
+                    document.body.removeChild(spanDom);
+                    //调用生成span函数，再次触发事件
+                    createSpan()
+                } else {
+                    spanDom.style.top = top + 2 + 'px';
+                }
+            }, 30)
+        }
+        //调用
+        createSpan()
+        // 绑定键盘按下事件
+        // document.onkeypress = function (e) {
+        //     // 获取事件对象
+        //     var event = e || window.event;
+        //     if (event.key == char) {
+        //         // 按下的字母 跟随机生成的相同
+        //         clearInterval(timer);
+        //         // 销毁span标签
+        //         document.body.removeChild(spanDom);
+        //         createSpan();
+        //         // 得分加1
+        //         get('b').innerHTML++;
+        //     }
+        // }
+    </script>
+</body>
+
+</html>
